@@ -205,12 +205,12 @@
    (s-boxes :accessor s-boxes :type blowfish-s-boxes)))
 
 (eval-when (:compile-toplevel)
-(defmacro s-box (s-boxes which index)
+(defmacro blowfish-s-box (s-boxes which index)
   `(aref ,s-boxes (+ (* 256 ,which) ,index)))
-(defmacro s-box-0 (s-boxes index) `(s-box ,s-boxes 0 ,index))
-(defmacro s-box-1 (s-boxes index) `(s-box ,s-boxes 1 ,index))
-(defmacro s-box-2 (s-boxes index) `(s-box ,s-boxes 2 ,index))
-(defmacro s-box-3 (s-boxes index) `(s-box ,s-boxes 3 ,index))
+(defmacro s-box-0 (s-boxes index) `(blowfish-s-box ,s-boxes 0 ,index))
+(defmacro s-box-1 (s-boxes index) `(blowfish-s-box ,s-boxes 1 ,index))
+(defmacro s-box-2 (s-boxes index) `(blowfish-s-box ,s-boxes 2 ,index))
+(defmacro s-box-3 (s-boxes index) `(blowfish-s-box ,s-boxes 3 ,index))
 ) ; EVAL-WHEN
 
 (declaim (inline blowfish-f))
@@ -238,8 +238,8 @@
       (do ((j 0 (+ j 2)))
           ((= j 256))
         (blowfish-encrypt-block* p-array s-boxes data 0 data 0)
-        (setf (s-box s-boxes i j) (ub32ref/be data 0)
-              (s-box s-boxes i (1+ j)) (ub32ref/be data 4))))))
+        (setf (blowfish-s-box s-boxes i j) (ub32ref/be data 0)
+              (blowfish-s-box s-boxes i (1+ j)) (ub32ref/be data 4))))))
 
 (declaim (inline blowfish-encrypt-block*))
 (defun blowfish-encrypt-block* (p-array s-boxes plaintext plaintext-start
