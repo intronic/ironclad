@@ -138,14 +138,14 @@
        for r from 1 to +whirlpool-rounds+
        do (progn
             (loop for j below 8 do
-                 (setf (aref one-row-of-bytes j) (s (+ (* 8 (- r 1)) j))))
+                 (setf (aref one-row-of-bytes j) (S (+ (* 8 (- r 1)) j))))
             (setf (aref result (* 2 r)) (ub32ref/be one-row-of-bytes 0))
             (setf (aref result (+ (* 2 r) 1)) (ub32ref/be one-row-of-bytes 4)))
        finally (return result)))
 
 (declaim (type (simple-array (unsigned-byte 32) (8 256)) +C-EVEN+ +C-ODD+))
-(defconst +C-EVEN+ #.(calculate-c-even))
-(defconst +C-ODD+ #.(calculate-c-odd))
+(defconst +c-even+ #.(calculate-c-even))
+(defconst +c-odd+ #.(calculate-c-odd))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;;; Macro helper functions.
