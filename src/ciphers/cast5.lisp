@@ -297,7 +297,7 @@
 (eval-when (:compile-toplevel)
 (defmacro cast5-s-box (s-boxes s-box-index index)
   (declare (ignore s-boxes))
-  `(aref ,(intern (format nil "+cast5-sbox~A+" s-box-index)) ,index))
+  `(aref ,(case-intern (format nil "+cast5-sbox~A+" s-box-index)) ,index))
 ) ; EVAL-WHEN
 
 (defun cast5-f1 (input mask rotate)

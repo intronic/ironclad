@@ -304,7 +304,7 @@
       ;; MACROLET and no #., so we go ahead and build everything at
       ;; read-time.
       #.(flet ((mod-box-element (index)
-                 (let ((rs-sym (intern (format nil "rs~D" index))))
+                 (let ((rs-sym (case-intern (format nil "rs~D" index))))
                    `(setf (aref box (+ box-offset ,index))
                           (logxor (aref box (+ box-offset ,index))
                                   (aref +twofish-exp-to-poly+
@@ -350,8 +350,8 @@
            (type twofish-s-boxes s-boxes)
            (type (simple-array (unsigned-byte 8) (16)) key box))
   (macrolet ((q-frob (i1 i2 d1 d2)
-               (let ((q0 (intern (format nil "+twofish-q~A+" (ldb (byte 1 1) i1))))
-                     (q1 (intern (format nil "+twofish-q~A+" (ldb (byte 1 0) i1)))))
+               (let ((q0 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 1) i1))))
+                     (q1 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 0) i1)))))
                  `(logxor (aref ,q0 (logxor (aref ,q1 ,i2) ,d1)) ,d2))))
     (dotimes (i 256)
       (setf (s-box-0 s-boxes i) (aref +twofish-mds0+
@@ -393,9 +393,9 @@
            (type (simple-array (unsigned-byte 8) (24)) key)
            (type (simple-array (unsigned-byte 8) (16)) box))
   (macrolet ((q-frob (i1 i2 d1 d2 d3)
-               (let ((q0 (intern (format nil "+twofish-q~A+" (ldb (byte 1 2) i1))))
-                     (q1 (intern (format nil "+twofish-q~A+" (ldb (byte 1 1) i1))))
-                     (q2 (intern (format nil "+twofish-q~A+" (ldb (byte 1 0) i1)))))
+               (let ((q0 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 2) i1))))
+                     (q1 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 1) i1))))
+                     (q2 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 0) i1)))))
                  `(logxor (aref ,q0 (logxor (aref ,q1 (logxor (aref ,q2 ,i2)
                                                               ,d1))
                                      ,d2))
@@ -440,10 +440,10 @@
            (type (simple-array (unsigned-byte 8) (32)) key)
            (type (simple-array (unsigned-byte 8) (16)) box))
   (macrolet ((q-frob (i1 i2 d1 d2 d3 d4)
-               (let ((q0 (intern (format nil "+twofish-q~A+" (ldb (byte 1 3) i1))))
-                     (q1 (intern (format nil "+twofish-q~A+" (ldb (byte 1 2) i1))))
-                     (q2 (intern (format nil "+twofish-q~A+" (ldb (byte 1 1) i1))))
-                     (q3 (intern (format nil "+twofish-q~A+" (ldb (byte 1 0) i1)))))
+               (let ((q0 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 3) i1))))
+                     (q1 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 2) i1))))
+                     (q2 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 1) i1))))
+                     (q3 (case-intern (format nil "+twofish-q~A+" (ldb (byte 1 0) i1)))))
                  `(logxor (aref ,q0 (logxor (aref ,q1 (logxor (aref ,q2 (logxor (aref ,q3 ,i2) ,d1)) ,d2)) ,d3)) ,d4))))
     (dotimes (i 256)
       (setf (s-box-0 s-boxes i) (aref +twofish-mds0+

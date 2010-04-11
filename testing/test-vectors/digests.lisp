@@ -44,25 +44,25 @@
         finally (return `(progn ,@forms)))
 
 #.(loop for digest in (crypto:list-all-digests)
-        collect `(rtest:deftest ,(intern (format nil "~A/incremental" digest))
+        collect `(rtest:deftest ,(crypto::case-intern (format nil "~A/incremental" digest))
                    (run-test-vector-file ',digest *digest-incremental-tests*) t) into forms
         finally (return `(progn ,@forms)))
 
 #.(if (boundp '*digest-stream-tests*)
       (loop for digest in (crypto:list-all-digests)
-         collect `(rtest:deftest ,(intern (format nil "~A/stream" digest))
+         collect `(rtest:deftest ,(crypto::case-intern (format nil "~A/stream" digest))
                       (run-test-vector-file ',digest *digest-stream-tests*) t) into forms
          finally (return `(progn ,@forms)))
       nil)
 
 #.(loop for digest in (crypto:list-all-digests)
-        collect `(rtest:deftest ,(intern (format nil "~A/reinitialize-instance" digest))
+        collect `(rtest:deftest ,(crypto::case-intern (format nil "~A/reinitialize-instance" digest))
                    (run-test-vector-file ',digest *digest-reinitialize-instance-tests*) t) into forms
         finally (return `(progn ,@forms)))
 
 #.(if (boundp '*digest-fill-pointer-tests*)
       (loop for digest in (crypto:list-all-digests)
-         collect `(rtest:deftest ,(intern (format nil "~A/fill-pointer" digest))
+         collect `(rtest:deftest ,(crypto::case-intern (format nil "~A/fill-pointer" digest))
                       (run-test-vector-file ',digest *digest-fill-pointer-tests*) t) into forms
          finally (return `(progn ,@forms)))
       nil)

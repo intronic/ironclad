@@ -78,10 +78,10 @@
 ;;; macros for "mid-level" functions
 
 (defmacro define-digest-registers ((digest-name &key (endian :big) (size 4) (digest-registers nil)) &rest registers)
-  (let* ((struct-name (intern (format nil "~A-regs" digest-name)))
-         (constructor (intern (format nil "initial-~A" struct-name)))
-         (copier (intern (format nil "%copy-~A" struct-name)))
-         (digest-fun (intern (format nil "~aregs-digest" digest-name)))
+  (let* ((struct-name (case-intern (format nil "~A-regs" digest-name)))
+         (constructor (case-intern (format nil "initial-~A" struct-name)))
+         (copier (case-intern (format nil "%copy-~A" struct-name)))
+         (digest-fun (case-intern (format nil "~aregs-digest" digest-name)))
          (register-bit-size (* size 8))
          (digest-size (* size (or digest-registers
                                   (length registers))))
@@ -107,7 +107,7 @@
                  `(setf ,@(loop for (reg value) in registers
                              for index from 0 below digest-size by size
                              nconc `((,ref-fun buffer (+ start ,index))
-                                     (,(intern (format nil "~A-regs-~A" digest-name reg)) regs))))))
+                                     (,(case-intern (format nil "~A-regs-~A" digest-name reg)) regs))))))
                (cond
                  #+(and sbcl :little-endian)
                  ((eq endian :little)
@@ -143,10 +143,10 @@
 (defmacro define-digest-finalizer (specs &body body)
   (let* ((single-digest-p (not (consp (car specs))))
          (specs (if single-digest-p (list specs) specs))
-         (inner-fun-name (intern (format nil "%finalize-~A-state" (caar specs)))))
+         (inner-fun-name (case-intern (format nil "%finalize-~A-state" (caar specs)))))
     (destructuring-bind (maybe-doc-string &rest rest) body
       (loop for (digest-name digest-size) in specs
-         for regs-digest-fun = (intern (format nil "~Aregs-digest" digest-name))
+         for regs-digest-fun = (case-intern (format nil "~Aregs-digest" digest-name))
          collect `(defmethod finalize-digest ((state ,digest-name)
                                               &optional buffer buffer-start)
                     ,@(when (stringp maybe-doc-string)
@@ -180,7 +180,7 @@
                 (macrolet ((finalize-registers (state regs)
                              (declare (ignore state))
                              ,(if single-digest-p
-                                  ``(,',(intern (format nil "~Aregs-digest" (caar specs))) ,regs %buffer buffer-start)
+                                  ``(,',(case-intern (format nil "~Aregs-digest" (caar specs))) ,regs %buffer buffer-start)
                                   ``(funcall reg-digest-fun ,regs %buffer buffer-start))))
                   ,@(if (stringp maybe-doc-string)
                         rest
@@ -360,7 +360,7 @@ An error will be signaled if there is insufficient room in DIGEST."))
 
 (defun optimized-maker-name (name)
   (let ((*package* (find-package :ironclad)))
-    (intern (format nil "%make-~A-digest" name))))
+    (case-intern (format nil "%make-~A-digest" name))))
 
 (defmacro defdigest (name &key digest-length block-length)
   (let ((optimized-maker-name (optimized-maker-name name)))
