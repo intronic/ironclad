@@ -244,5 +244,5 @@
   nil)
 
 (defmethod perform ((op test-op) (c (eql (find-system :ironclad-tests))))
-  (or (funcall (intern "do-tests" (find-package "rtest")))
+  (or (funcall (intern (symbol-name :do-tests) (find-package 'rtest)))
       (error "TEST-OP failed for IRONCLAD-TESTS")))
