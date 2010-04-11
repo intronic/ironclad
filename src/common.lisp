@@ -22,6 +22,16 @@
     `(simple-array (unsigned-byte 8) (,length))))
 
 
+;;; Intern a symbol portably between ANSI CL and case-sensitive lisps
+;;; eg. Allegro modern
+(eval-when (:compile-toplevel :load-toplevel :execute)
+(defun case-intern (x)
+  (intern (if (eq :upcase (readtable-case *readtable*))
+	      (string-upcase x)
+	    (string-downcase x))))
+) ; EVAL-WHEN
+
+
 ;;; a global specification of optimization settings
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -49,7 +59,7 @@
 ;;; These functions are named according to big-endian conventions.  The
 ;;; comment is here because I always forget and need to be reminded.
 #.(loop for i from 1 to 8
-        collect (let ((name (intern (format nil "~(~:R~)-byte" i))))
+        collect (let ((name (case-intern (format nil "~(~:R~)-byte" i))))
                   `(progn
                     (declaim (inline ,name))
                     (declaim (ftype (function (unsigned-byte) (unsigned-byte 8)) ,name))
@@ -63,7 +73,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
 (defun ubref-fun-name (bitsize big-endian-p)
-  (intern (format nil "ub~Dref/~:[le~;be~]" bitsize big-endian-p)))
+  (case-intern (format nil "ub~Dref/~:[le~;be~]" bitsize big-endian-p)))
 ) ; EVAL-WHEN
 
 (macrolet ((define-fetcher (bitsize &optional big-endian)
@@ -98,7 +108,7 @@
                                                      (- bytes i)
                                                      (1- i))))
                                      `(setf (aref buffer (+ index ,offset))
-                                       (,(intern (format nil "~(~:R~)-byte" i)) value))))
+                                       (,(case-intern (format nil "~(~:R~)-byte" i)) value))))
                    (values)))))
            (define-fetchers-and-storers (bitsize)
              `(progn
